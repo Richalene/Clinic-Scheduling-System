@@ -220,3 +220,28 @@ __marimo__/
 # AI Agents
 AGENTS/
 
+# ------------------------------------
+# Custom Project Rules
+# ------------------------------------
+# Test folders (as requested)
+backend/tests/
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Sensitive & Secrets
+*.pem
+*.key
+*.cert
+*.log
+.env
+.env.*
+!.env.example
+
+# OS & Build outputs
+.DS_Store
+node_modules/
+dist/
+build/
+.vite/

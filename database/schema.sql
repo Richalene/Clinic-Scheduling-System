@@ -22,6 +22,9 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role user_role NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    failed_login_attempts INTEGER NOT NULL DEFAULT 0,
+    locked_until TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -182,6 +185,20 @@ CREATE TABLE status_history (
     new_status appointment_status NOT NULL,
     changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- 15. refresh_tokens
+CREATE TABLE refresh_tokens (
+    token_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    token_hash VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    revoked BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_refresh_tokens_hash ON refresh_tokens(token_hash);
+CREATE INDEX idx_refresh_tokens_user ON refresh_tokens(user_id);
+
 
 
 -------------------------------------------------------------------------------

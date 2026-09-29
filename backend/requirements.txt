@@ -13,6 +13,17 @@ python-dotenv>=1.0.0
 pydantic[email]>=2.0.0
 
 # Authentication and security (JWT & password hashing)
-passlib[bcrypt]>=1.7.4
+passlib[argon2]>=1.7.4
+argon2-cffi>=23.1.0
 python-jose[cryptography]>=3.3.0
 python-multipart>=0.0.6
+slowapi>=0.1.9
+
+# Configuration management
+pydantic-settings>=2.0.0
+
+# Testing & Typing
+httpx>=0.25.0
+pytest>=7.4.3
+types-python-jose>=3.3.4
+types-passlib>=1.7.7

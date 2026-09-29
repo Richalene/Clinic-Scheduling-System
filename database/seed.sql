@@ -12,17 +12,17 @@ INSERT INTO departments (department_name) VALUES
 
 -- 2. Users (1 admin, 1 receptionist, 4 doctors, 3 nurses, 2 patients)
 INSERT INTO users (full_name, email, password_hash, role) VALUES
-('Admin Alice', 'admin@clinic.com', 'hash_admin', 'administrator'),
-('Recp Bob', 'bob@clinic.com', 'hash_recp', 'receptionist'),
-('Dr. Charlie', 'charlie@clinic.com', 'hash_doc', 'doctor'),
-('Dr. Diana', 'diana@clinic.com', 'hash_doc', 'doctor'),
-('Dr. Eve', 'eve@clinic.com', 'hash_doc', 'doctor'),
-('Dr. Frank', 'frank@clinic.com', 'hash_doc', 'doctor'),
-('Nurse Grace', 'grace@clinic.com', 'hash_nur', 'nurse'),
-('Nurse Heidi', 'heidi@clinic.com', 'hash_nur', 'nurse'),
-('Nurse Ivan', 'ivan@clinic.com', 'hash_nur', 'nurse'),
-('Patient John', 'john@gmail.com', 'hash_pat', 'patient'),
-('Patient Mary', 'mary@gmail.com', 'hash_pat', 'patient');
+('Admin Alice', 'admin@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'administrator'),
+('Recp Bob', 'bob@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'receptionist'),
+('Dr. Charlie', 'charlie@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'doctor'),
+('Dr. Diana', 'diana@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'doctor'),
+('Dr. Eve', 'eve@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'doctor'),
+('Dr. Frank', 'frank@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'doctor'),
+('Nurse Grace', 'grace@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'nurse'),
+('Nurse Heidi', 'heidi@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'nurse'),
+('Nurse Ivan', 'ivan@clinic.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'nurse'),
+('Patient John', 'john@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'patient'),
+('Patient Mary', 'mary@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$J8Q4R6j1/t97L8UYYwwhBA$b8qferdfWO8OtUMQVXihbtntFALQ2uykFrBi3nNb6sI', 'patient');
 
 -- 3. Staff (Link users to departments)
 -- Doctors
