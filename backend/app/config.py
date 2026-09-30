@@ -1,4 +1,5 @@
 
+from pathlib import Path
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -7,6 +8,7 @@ class Settings(BaseSettings):
     """
     Application settings, loaded from environment variables or .env file.
     """
+    PROFILE_PICTURE_DIR: str = str(Path(__file__).resolve().parents[1] / "uploads" / "profiles")
     DATABASE_URL: str
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
@@ -28,6 +30,9 @@ class Settings(BaseSettings):
     @property
     def get_allowed_origins_list(self) -> list[str]:
         """Convert comma-separated string to list."""
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+        origins = [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+        if self.ENVIRONMENT.lower() == "development":
+            origins.extend(["http://localhost:5173", "http://127.0.0.1:5173"])
+        return list(dict.fromkeys(origins))
 
 settings = Settings()

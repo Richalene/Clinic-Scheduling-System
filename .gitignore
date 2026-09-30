@@ -223,9 +223,14 @@ AGENTS/
 # ------------------------------------
 # Custom Project Rules
 # ------------------------------------
-# Test folders (as requested)
-backend/tests/
+# Backend regression tests are versioned with the booking flow.
+backend/.venv-cache/
+frontend/.npm-cache/
+frontend/playwright-report/
+frontend/test-results/
 tests/
+!backend/tests/
+!backend/tests/*.py
 .pytest_cache/
 .coverage
 htmlcov/
@@ -245,3 +250,5 @@ node_modules/
 dist/
 build/
 .vite/
+
+backend/uploads/

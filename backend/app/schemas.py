@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.models import (
     AppointmentPriority,
@@ -48,11 +48,36 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=12, max_length=128)
     role: UserRole
 
+class AccountDeleteRequest(InputSchema):
+    admin_password: str = Field(min_length=1, max_length=128)
+
+
 class UserUpdate(InputSchema):
     full_name: str | None = Field(None, min_length=2, max_length=255)
     email: EmailStr | None = None
     is_active: bool | None = None
     role: UserRole | None = None
+
+    @field_validator("full_name", "email", "is_active", "role")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("This field cannot be null")
+        if isinstance(value, str) and len(value.strip()) < 2:
+            raise ValueError("This field cannot be blank")
+        return value.strip() if type(value) is str else value
+
+class ProfileUpdate(InputSchema):
+    full_name: str | None = Field(None, min_length=2, max_length=255)
+    email: EmailStr | None = None
+    phone_number: str | None = Field(None, max_length=50)
+
+    @field_validator("full_name", "email")
+    @classmethod
+    def reject_blank(cls, value):
+        if value is None or len(value.strip()) < 2:
+            raise ValueError("This field cannot be blank or null")
+        return value.strip()
 
 class UserRead(BaseSchema):
     user_id: int
@@ -62,6 +87,12 @@ class UserRead(BaseSchema):
     is_active: bool
     created_at: datetime
     # CRITICAL: password_hash, failed_login_attempts, locked_until are explicitly omitted
+
+class UserMeRead(UserRead):
+    profile_picture: str | None = None
+    patient_id: int | None = None
+    staff_id: int | None = None
+    phone_number: str | None = None
 
 # -------------------------------------------------------------------
 # Department Schemas
@@ -166,14 +197,37 @@ class EquipmentRead(BaseSchema):
 # -------------------------------------------------------------------
 
 class AppointmentBase(InputSchema):
-    patient_id: int
-    service_id: int
-    start_at: datetime
+    patient_id: int = Field(gt=0)
+    service_id: int = Field(gt=0)
+    start_at: AwareDatetime
     priority: AppointmentPriority = AppointmentPriority.normal
 
 class AppointmentCreate(AppointmentBase):
-    pass
-    # end_at is calculated by the service, room/staff assigned by system
+    doctor_id: int | None = Field(None, gt=0)
+    # Equipment requirements are selected explicitly; the database has no
+    # service-to-equipment requirement table. Room/staff are assigned by system.
+    equipment_ids: list[int] = Field(default_factory=list, max_length=50)
+
+    @field_validator("equipment_ids")
+    @classmethod
+    def validate_equipment_ids(cls, value):
+        if any(item <= 0 for item in value) or len(value) != len(set(value)):
+            raise ValueError("equipment_ids must contain unique positive IDs")
+        return value
+
+class AvailableSlotRead(BaseSchema):
+    candidate_start: datetime
+    candidate_end: datetime
+    room_id: int
+    doctor_id: int
+    nurse_id: int | None
+    equipment_ids: list[int] = Field(default_factory=list)
+
+class AppointmentStaffRead(BaseSchema):
+    staff_id: int
+
+class AppointmentEquipmentRead(BaseSchema):
+    equipment_id: int
 
 class AppointmentUpdate(InputSchema):
     start_at: datetime | None = None
@@ -194,6 +248,8 @@ class AppointmentRead(BaseSchema):
     patient: PatientRead | None = None
     service: ServiceRead | None = None
     room: RoomRead | None = None
+    assigned_staff: list[AppointmentStaffRead] = Field(default_factory=list)
+    assigned_equipment: list[AppointmentEquipmentRead] = Field(default_factory=list)
 
 # -------------------------------------------------------------------
 # Waitlist Schemas
@@ -214,3 +270,13 @@ class WaitlistEntryRead(BaseSchema):
     preferred_date: date
     status: WaitlistStatus
     created_at: datetime
+
+
+class PatientAccountCreate(UserBase):
+    password: str = Field(min_length=12, max_length=128)
+    phone_number: str | None = Field(None, max_length=50)
+
+
+class StaffAccountCreate(UserCreate):
+    department_id: int | None = Field(None, gt=0)
+    qualification: str | None = Field(None, max_length=255)

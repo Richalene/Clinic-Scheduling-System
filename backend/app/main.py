@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from app.config import settings
 from app.dependencies import limiter
 from slowapi import _rate_limit_exceeded_handler
-from app.routers import appointments, auth, reports, shifts, staff, users, waitlist
+from app.routers import appointments, auth, lookups, reports, shifts, staff, users, waitlist
 
 # Conditionally disable docs in production
 docs_kwargs = {}
@@ -62,6 +62,7 @@ app.include_router(shifts.router)
 app.include_router(appointments.router)
 app.include_router(waitlist.router)
 app.include_router(reports.router)
+app.include_router(lookups.router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

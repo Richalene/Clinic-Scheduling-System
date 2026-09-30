@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import require_role
+from app.dependencies import get_current_user, require_role
 from app.models import Department, Staff, User, UserRole
 from app.schemas import (
     DepartmentCreate,
@@ -22,7 +22,8 @@ router = APIRouter(prefix="/staff", tags=["Staff"])
 def list_departments(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """List departments. Open to any authenticated user."""
     return db.query(Department).offset(skip).limit(limit).all()
@@ -48,7 +49,8 @@ def create_department(
 def list_staff(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """List staff. Open to any authenticated user."""
     return db.query(Staff).offset(skip).limit(limit).all()

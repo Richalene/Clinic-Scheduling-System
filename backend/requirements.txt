@@ -27,3 +27,6 @@ httpx>=0.25.0
 pytest>=7.4.3
 types-python-jose>=3.3.4
 types-passlib>=1.7.7
+
+# Profile picture validation and resizing
+Pillow>=11.0.0

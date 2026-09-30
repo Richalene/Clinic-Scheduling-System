@@ -2,13 +2,13 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
+from pydantic import Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import get_current_user, limiter
 from app.models import RefreshToken, User
-from app.schemas import Token
+from app.schemas import InputSchema, Token
 from app.security import (
     create_access_token,
     create_refresh_token,
@@ -21,9 +21,9 @@ from app.security import (
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-class ChangePasswordRequest(BaseModel):
-    old_password: str
-    new_password: str
+class ChangePasswordRequest(InputSchema):
+    old_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=12, max_length=128)
 
 @router.post("/login", response_model=Token)
 @limiter.limit("10/minute")
@@ -37,7 +37,7 @@ def login(
     Authenticate a user and return an access token.
     Sets an HttpOnly cookie with the refresh token.
     """
-    user = db.query(User).filter(User.email == form_data.username).first()
+    user = db.query(User).filter(User.email == form_data.username).with_for_update().first()
 
     # Generic error message to prevent email enumeration
     generic_error = HTTPException(
@@ -84,8 +84,6 @@ def login(
     if needs_rehash(user.password_hash):
         user.password_hash = get_password_hash(form_data.password)
         
-    db.commit()
-
     # Generate tokens
     access_token = create_access_token(subject=str(user.user_id), role=user.role)
     refresh_token = create_refresh_token(subject=str(user.user_id), role=user.role)
@@ -134,19 +132,9 @@ def refresh_token(
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
 
-    user = db.query(User).filter(User.user_id == int(user_id)).first()
+    user = db.query(User).filter(User.user_id == int(user_id)).with_for_update().first()
     if not user or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found or inactive")
-
-    # Find the token hash in the database
-    # Since we only store hashes, we must iterate through the user's active tokens and verify
-    # (In a highly loaded system, storing a JTI to quickly find the record before hashing is faster,
-    # but since a user typically has few active sessions, iterating is acceptable here).
-    active_tokens = db.query(RefreshToken).filter(
-        RefreshToken.user_id == user.user_id,
-        RefreshToken.revoked == False,
-        RefreshToken.expires_at > datetime.now(timezone.utc)
-    ).all()
 
     matched_token_record = None
     for rt_record in active_tokens:
@@ -223,20 +211,25 @@ def logout(
 def change_password(
     request: Request,
     payload: ChangePasswordRequest,
+    response: Response,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     Changes the user's password and revokes all their existing refresh tokens 
-    to force re-login on all devices.
+    to require login when existing access tokens expire.
     """
+    db.refresh(current_user, with_for_update=True)
     if not verify_password(payload.old_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail="Incorrect old password")
         
+    if verify_password(payload.new_password, current_user.password_hash):
+        raise HTTPException(400, "Choose a different new password")
     current_user.password_hash = get_password_hash(payload.new_password)
     
-    # Revoke all tokens
+    # Revoke all refresh tokens
     db.query(RefreshToken).filter(RefreshToken.user_id == current_user.user_id).update({"revoked": True})
     db.commit()
     
-    return {"detail": "Password updated successfully. All other sessions logged out."}
+    response.delete_cookie("refresh_token", secure=True, httponly=True, samesite="strict")
+    return {"detail": "Password updated. Refresh sessions revoked; existing access tokens expire normally."}
