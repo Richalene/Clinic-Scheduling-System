@@ -242,7 +242,7 @@ No database migration is required.
 The PPTH theme uses restrained teal accents, borderless panels with soft shadows, compact tables,
 and straightforward page labels. The landing photo and its fade remain customizable.
 
-Booking-guide cards use solid sage, pale blue, and peach surfaces. Card edges
+Booking-guide cards use a consistent muted sage surface. Card edges
 are defined by subtle shadows rather than frames; fields use inset shadows and tables use alternating row backgrounds.
 
 Shared borderless styling covers navigation, dialogs, notices, tabs, buttons,
@@ -266,3 +266,7 @@ POST `/appointments/{id}/approve` confirms a future pending appointment; POST
 cancellation flow. Rejected requests appear as Cancelled in the existing status
 model. Decisions lock the appointment, reject repeat decisions with 409, and
 record the acting user through existing status-history triggers. No migration.
+
+Page copy is kept short: primary headings and actions, essential form guidance,
+and confirmation details. Dashboard promotional panels and repeated landing
+booking prompts have been removed.

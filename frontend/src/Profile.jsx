@@ -49,7 +49,7 @@ export default function Profile({ user, onUpdated, onPasswordChanged }) {
       onPasswordChanged();
     } catch (err) { setPasswordError(err.message); } finally { setChangingPassword(false); }
   }
-  return <><PageHeading eyebrow="Your account" title="My profile">Keep your details up to date and manage your password.</PageHeading>
+  return <><PageHeading title="My profile" />
     <Notice>{error}</Notice><Notice kind="success">{success}</Notice><fieldset disabled={pictureBusy || saving} aria-label="Profile picture" aria-busy={pictureBusy} className="mb-6 min-w-0 rounded-2xl shadow-clinic bg-paper p-6 disabled:opacity-70">
           <div className="flex items-center gap-5 max-[480px]:flex-col max-[480px]:items-start">
             <div className="relative shrink-0">
@@ -58,7 +58,7 @@ export default function Profile({ user, onUpdated, onPasswordChanged }) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="mb-1 text-sm font-semibold text-ink">Profile picture</p>
-              <p className="mb-3 text-xs leading-relaxed text-muted">Update your profile photo.</p>
+              
               <input ref={pictureInput} className="hidden" aria-label="Choose profile picture" aria-describedby="picture-help" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => { updatePicture(event.target.files?.[0]); event.target.value = ''; }} />
               <div className="flex flex-wrap items-center gap-3">
                 <button type="button" className="button button-primary button-small focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal" onClick={() => pictureInput.current?.click()}>{pictureBusy ? <LoaderCircle size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Upload size={16} aria-hidden="true" />}{pictureBusy ? 'Saving...' : user.profile_picture ? 'Change photo' : 'Upload photo'}</button>
@@ -66,7 +66,7 @@ export default function Profile({ user, onUpdated, onPasswordChanged }) {
               </div>
             </div>
           </div>
-          <p id="picture-help" className="mb-0 mt-4 pt-3 text-xs leading-relaxed text-muted">JPG, PNG or WebP. Up to 2 MB. Photos are cropped to a square and saved automatically.</p>
+          <p id="picture-help" className="mb-0 mt-4 pt-3 text-xs leading-relaxed text-muted">JPG, PNG or WebP. Up to 2 MB. Square crop. Saves automatically.</p>
           <span className="sr-only" role="status">{pictureBusy ? 'Saving profile picture' : ''}</span>
         </fieldset>
     <div className="grid grid-cols-2 items-stretch gap-6 max-[1100px]:grid-cols-1">

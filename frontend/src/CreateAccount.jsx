@@ -39,5 +39,5 @@ export default function PatientAccounts() {
   const { refresh } = useCatalogs();
   const [revision, setRevision] = useState(0);
   const [message, setMessage] = useState('');
-  return <><PageHeading eyebrow="Reception workspace" title="Add a patient account">Create a login and linked patient profile in one step.</PageHeading><section className="dash-panel max-w-xl"><Notice kind="success">{message}</Notice><CreateAccountForm key={revision} onCreated={(account) => { setMessage(`Account created for ${account.full_name}. They can now sign in.`); setRevision((n) => n + 1); refresh(); }} /></section></>;
+  return <><PageHeading title="Add a patient account" /><section className="dash-panel max-w-xl"><Notice kind="success">{message}</Notice><CreateAccountForm key={revision} onCreated={(account) => { setMessage(`Account created for ${account.full_name}. They can now sign in.`); setRevision((n) => n + 1); refresh(); }} /></section></>;
 }

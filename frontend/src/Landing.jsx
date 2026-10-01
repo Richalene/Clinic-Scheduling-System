@@ -4,7 +4,7 @@ import { Brand } from './components';
 
 export default function Landing({ user }) {
   const destination = user ? '/app/book' : '/login';
-  return <>
+  return <div className="landing-page">
     <header className="site-header"><Brand /><nav className="main-nav" aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#for-teams">For your team</a></nav>
       <div className="header-actions"><Link className="text-link" to={user ? '/app' : '/login'}>{user ? 'Your dashboard' : 'Sign in'}</Link><Link className="button button-primary button-small" to={destination}>Book a visit <ArrowRight size={16} /></Link></div>
     </header>
@@ -18,15 +18,14 @@ export default function Landing({ user }) {
         <div className="hero-photo-fade" />
       </div>
     </section>
-    <section className="booking-wrap"><div><p className="eyebrow">Appointments</p><h2>Schedule a hospital visit</h2><p>Choose a service and explore times that work for you.</p></div><Link className="button button-primary" to={destination}>Explore available times <ArrowRight size={18} /></Link></section>
-    <section className="section" id="how-it-works"><div className="section-heading"><div><p className="eyebrow">Patient guide</p><h2>How to book</h2></div><p>Book online and view your appointment details in your account.</p></div>
+    <section className="section" id="how-it-works"><div className="section-heading"><div><h2>How to book</h2></div></div>
       <div className="service-grid mx-auto grid max-w-[1280px] grid-cols-3 gap-[18px] max-[980px]:grid-cols-1">{[
-        [Clock3, '01', 'Find your time', 'Choose your service and see available appointments that fit your day.', 'sage'],
-        [CalendarCheck2, '02', 'Book with confidence', 'Your clinic checks the room and care team before confirming your visit.', 'blue'],
-        [UsersRound, '03', 'Stay connected', 'See upcoming visits and cancel an appointment when your plans change.', 'peach'],
+        [Clock3, '01', 'Choose a time', 'Select a service, doctor, and time.', 'sage'],
+        [CalendarCheck2, '02', 'Request a visit', 'Your care team reviews your request.', 'blue'],
+        [UsersRound, '03', 'View appointments', 'Check your booking status or cancel.', 'peach'],
       ].map(([Icon, number, title, copy, color]) => <article className={`service-card service-card-${color}`} key={number}><span className="service-number">{number}</span><span className={`service-icon ${color}`}><Icon size={25} strokeWidth={1.5} /></span><h3>{title}</h3><p>{copy}</p></article>)}</div>
     </section>
-    <section className="cta-section" id="for-teams"><div><p className="eyebrow light">Staff access</p><h2>Manage the hospital schedule</h2><p>Bring appointments, staff shifts, rooms, and equipment together in one coordinated workspace.</p></div><Link className="button button-light" to={user ? '/app' : '/login'}>Open your workspace <ArrowRight size={18} /></Link></section>
+    <section className="cta-section" id="for-teams"><div><p className="eyebrow light">Staff access</p><h2>Manage the hospital schedule</h2><p>Appointments, shifts, and resources.</p></div><Link className="button button-light" to={user ? '/app' : '/login'}>Open your workspace <ArrowRight size={18} /></Link></section>
     </main><footer className="site-footer"><Brand /><p>Patient appointments and staff scheduling.</p><Link className="text-link" to={destination}>Plan your next visit →</Link><small>© {new Date().getFullYear()} Princeton-Plainsboro Teaching Hospital (PPTH) · Clinic Workforce Scheduling System</small></footer>
-  </>;
+  </div>;
 }

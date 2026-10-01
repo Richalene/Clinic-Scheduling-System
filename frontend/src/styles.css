@@ -468,9 +468,7 @@ svg { @apply shrink-0 align-middle; }
   .hero-copy { padding-top: 85px; padding-bottom: 95px; }
   .eyebrow { letter-spacing: .1em; }
   .service-card { min-height: 220px; }
-  .service-card-sage { background: var(--sage); }
-  .service-card-blue { background: var(--blue); }
-  .service-card-peach { background: var(--peach); }
+  .service-card-sage, .service-card-blue, .service-card-peach { background: #e5ece4; }
   .service-card .service-icon { background: transparent; width: auto; height: 32px; display: flex; justify-content: flex-start; }
   .service-card p { color: #435d60; }
   .service-card .service-number { color: #526d69; }
@@ -641,5 +639,22 @@ svg { @apply shrink-0 align-middle; }
     .appointment-toolbar { grid-template-columns: 1fr; }
     .appointment-toolbar .icon-button { justify-self: end; }
     .appointment-list-panel .appointment-table { min-width: 1000px; }
+  }
+}
+
+/* Shared alignment with the 1280px booking guide; header and photo untouched. */
+@layer components {
+  .landing-page { --landing-gutter: max(clamp(24px, 7vw, 110px), calc((100vw - 1280px) / 2)); }
+  .landing-page .hero-copy { padding-left: var(--landing-gutter); padding-right: 32px; }
+  .landing-page #how-it-works { padding-inline: var(--landing-gutter); }
+  .landing-page .cta-section {
+    margin-inline: max(12px, calc(var(--landing-gutter) - 32px));
+    padding-inline: 32px;
+  }
+  .landing-page .site-footer { padding-inline: var(--landing-gutter); }
+  @media (max-width: 650px) {
+    .landing-page { --landing-gutter: 24px; }
+    .landing-page .hero-copy { padding-right: 24px; }
+    .landing-page .cta-section { margin-inline: 12px; padding-inline: 12px; }
   }
 }

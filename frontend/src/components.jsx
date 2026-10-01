@@ -31,7 +31,7 @@ export function Status({ value }) {
 }
 
 export function PageHeading({ eyebrow, title, children, action }) {
-  return <header className="dashboard-header"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{children}</p></div>{action}</header>;
+  return <header className="dashboard-header"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h1>{title}</h1>{children && <p>{children}</p>}</div>{action}</header>;
 }
 
 export function Modal({ title, children, onClose, busy = false }) {

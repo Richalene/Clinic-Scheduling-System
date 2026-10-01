@@ -27,12 +27,8 @@ export default function Auth({ onLogin, sessionMessage }) {
       }
     } catch (err) { setError(err.message); } finally { setBusy(false); }
   }
-  return <main className="auth-shell" id="main-content"><section className="auth-brand-panel"><Brand light /><div className="auth-message"><p className="eyebrow light">PPTH patient and staff portal</p><h1>Hospital scheduling.<br />One place to manage it.</h1><p>Access appointments, staff schedules, and hospital resources.</p></div><div className="auth-feature-list">{[
-    [CalendarDays, 'A clearer view of your day', 'Keep every appointment in one place.'],
-    [UsersRound, 'Care that works together', 'Coordinate the people and spaces you need.'],
-    [ShieldCheck, 'Your own clinic workspace', 'Sign in for access tailored to your role.'],
-  ].map(([Icon, title, copy]) => <div key={title}><span><Icon size={16} /></span><p><strong>{title}</strong><small>{copy}</small></p></div>)}</div></section>
-    <section className="auth-form-panel"><Link className="back-link" to="/"><ArrowLeft size={15} /> Back to home</Link><div className="login-card"><div className="login-heading"><p className="eyebrow">Account access</p><h2>{register ? 'Create an account' : 'Welcome back.'}</h2><p>{register ? 'Create a patient account to plan your next visit.' : 'Sign in with your hospital account.'}</p></div>
+  return <main className="auth-shell" id="main-content"><section className="auth-brand-panel"><Brand light /><div className="auth-message"><p className="eyebrow light">PPTH patient and staff portal</p><h1>Patient & staff portal</h1><p>Access appointments, staff schedules, and hospital resources.</p></div></section>
+    <section className="auth-form-panel"><Link className="back-link" to="/"><ArrowLeft size={15} /> Back to home</Link><div className="login-card"><div className="login-heading"><h2>{register ? 'Create an account' : 'Welcome back.'}</h2><p>{register ? 'Create a patient account to plan your next visit.' : 'Sign in with your hospital account.'}</p></div>
       <Notice>{error || (!success && sessionMessage)}</Notice><Notice kind="success">{success}</Notice>
       <form onSubmit={submit}><fieldset disabled={busy}>{register && <label className="form-field"><span>Full name</span><input name="name" autoComplete="name" required minLength={2} maxLength={255} /></label>}
         <label className="form-field"><span>Email address</span><input name="email" type="email" autoComplete="username" placeholder="you@example.com" required /></label>
