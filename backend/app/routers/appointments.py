@@ -144,3 +144,39 @@ def approve_appointment(appointment_id: int, db: Session = Depends(get_db), curr
 @router.post("/{appointment_id}/reject", response_model=AppointmentRead)
 def reject_appointment(appointment_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return review_appointment(appointment_id, False, db, current_user)
+
+@router.post("/{appointment_id}/complete", response_model=AppointmentRead)
+def complete_appointment(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Mark an appointment as completed.
+    Only doctors/nurses assigned to it, or admins/receptionists can do this.
+    """
+    if current_user.role == UserRole.patient:
+        raise HTTPException(status_code=403, detail="Patients cannot complete appointments")
+        
+    apt = db.query(Appointment).filter(Appointment.appointment_id == appointment_id).with_for_update().first()
+    if not apt:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+        
+    if current_user.role in [UserRole.doctor, UserRole.nurse]:
+        profile = current_user.staff_profile
+        if profile is None or not any(item.staff_id == profile.staff_id for item in apt.assigned_staff):
+            raise HTTPException(403, "You can only complete appointments assigned to you")
+            
+    if apt.status != AppointmentStatus.confirmed:
+        raise HTTPException(409, "Only confirmed appointments can be marked as completed")
+        
+    try:
+        db.execute(text("SELECT set_config('app.current_user_id', :id, true)"), {"id":str(current_user.user_id)})
+        apt.status = AppointmentStatus.completed
+        db.commit()
+    except DBAPIError as exc:
+        db.rollback()
+        raise HTTPException(409, "Could not complete appointment") from exc
+        
+    db.refresh(apt)
+    return apt
